@@ -1,2 +1,2 @@
 # SpeechNotebooks
- Jupyter Notebooks for Speech processing
+ Jupyter Notebooks for Speech signal processing
