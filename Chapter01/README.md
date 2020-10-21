@@ -139,7 +139,7 @@ cbar.set_label('Intensity dB')
 
 ## Step 4: Mel filter banks
 This figure shows the shape of trinagular mel-filter banks.
-![image.png](attachment:image.png)
+![png](Q0UUw.png)
 The following function first creates a power spectrum using the FFT of the signal, then that power spectrum `pow_frames` is filtered by Mel-filter banks.
 
 
