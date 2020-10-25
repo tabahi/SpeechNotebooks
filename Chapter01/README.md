@@ -291,7 +291,3 @@ plt.show()
 
 The End. In next chapter we will talk about the formant extraction from mel-spectrogram.
 
-
-```python
-
-```
