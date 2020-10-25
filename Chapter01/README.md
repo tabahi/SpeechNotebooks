@@ -9,6 +9,7 @@ The is the output preview generated from that file:
 Firt we import packages that are needed for reading the wav file and signal analysis. Make sure you have `wavio` and all the other packages installed. If not, then install using pip: `pip install wavio`
 ![png](cmd_out.png)
 
+New we start the code by first importing necessary packages:
 
 ```python
 import numpy as np                      #library for linear algebra
