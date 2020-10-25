@@ -5,8 +5,9 @@ The is the output preview generated from that file:
 
 
 ## Step 1: Reading the wav file
-
-Firt we import libraries that are needed for reading the wav file and signal analysis.
+ 
+Firt we import packages that are needed for reading the wav file and signal analysis. Make sure you have `wavio` and all the other packages installed. If not, then install using pip: `pip install wavio`
+![png](cmd_out.png)
 
 
 ```python
