@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/w3.css">
+    <link rel="stylesheet" href="assets/css/w3-theme-black.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+        * {
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .topnav {
+        overflow: hidden;
+        background-color: #333;
+        }
+
+        .topnav a {
+        float: left;
+        display: block;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        }
+
+        .topnav a:hover {
+        background-color: #ddd;
+        color: black;
+        }
+        
+        .footer {
+        background-color: #000000;
+        padding: 10px;
+        text-align: center;
+        padding: 14px 16px;
+        font-size: 10px;
+        color: rgb(167, 167, 167);
+        }
+
+        .center-content {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+                
+        .slider {
+        -webkit-appearance: none;
+        width: 28px;
+        height: 10px;
+        background: #0a1d3f;
+        outline: none;
+        }
+
+        .slider:hover {
+        width: 70px;
+        height: 16px;
+        }
+
+        .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 4px;
+        height: 16px;
+        background: #ffffff;
+        cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+        width: 4px;
+        height: 16px;
+        background: #ffffff;
+        cursor: pointer;
+        }
+
+        .hide {
+        display: none;
+        }
+
+        .hideDiv:hover + .hide {
+        display: inline-table;
+        color:white;
+        }
+
+        canvas {
+            
+            border: 1px inset rgb(46, 46, 46);
+            -webkit-transition: all 1s;
+            }
+        
+    </style>
+    
+    <title>Speech Analyzer</title>
+
+    
+  </head>
+
+<body class="w3-black">
+    
+    
+    <div class="topnav">
+        <a href="#">#</a>
+    </div>
+
+    <div class="w3-container w3-center w3-opacity">
+        <h5>CNN Spectrum Analyzer</h5>
+    </div>
+
+
+    <div class="w3-container w3-bottombar w3-border-dark-gray"> <!-- Main body container -->
+        <div class="w3-row w3-center" id="canvas_div" style="display: block;">
+            <canvas id="SpectrumCanvas" width="300" height="200" ></canvas>
+        </div>
+    </div>  <!-- Main body container ends -->
+
+    <div class="center-content w3-row w3-center w3-padding-32 w3-small">
+        
+    
+
+        <div class="w3-row w3-center w3-padding-small"> <!-- File loading zone -->
+            <div id="dropZone" class="w3-card-4">
+                <p>
+                    <label for="filesx" class="w3-hover-text-amber">Load Specta: </label>
+                    <input type="file" id="filesx" name="filesx[]" onchange="readmultifiles(this.files)" multiple="" class="w3-button w3-hover-border-khaki w3-padding" placeholder="PNG files" accept="image/*" />
+                    <button onclick="document.getElementById('db_settings_model').style.display='block'" class="w3-button w3-tiny w3-border w3-border-gray w3-margin-right">Load Labels</button>
+                </p>
+            </div>
+        </div>
+        
+    </div>
+
+    
+
+    <div class="w3-container w3-border-bottom">  <!-- DB Table container -->
+
+        
+            
+            
+
+          <!-- DB settings Modal -->
+          <div id="db_settings_model" class="w3-modal w3-animate-opacity">
+            <div class="w3-modal-content w3-card-4 w3-animate-zoom">
+                <header class="w3-container w3-theme-d1"> 
+                 <span onclick="document.getElementById('db_settings_model').style.display='none'" 
+                 class="w3-button w3-red w3-xlarge w3-display-topright">&times;</span>
+                 <h2>Load Labels</h2>
+                </header>
+              
+              
+                
+
+
+                <div class="w3-container w3-theme-d4 w3-small"> <!-- DB settings-->
+
+                    <div class="w3-row w3-padding-16">
+
+                        <h5>Labels</h5>
+
+                        <div class="w3-col m3">
+                            <input class="w3-check" id="use_custom_labels" title="Tip" type="checkbox" hidden>
+                        </div>
+
+                        <div class="w3-col m6">
+                            <label>Class Labels (Array of JSON objects)</label>
+                            <input class="w3-input w3-dark-input" type="text" id="class_labels" placeholder='[{ "emotion": ["A","H","N","S"] },  {"sex": ["M","F"] } ,  {"spkr": ["*"] } ]' value='[{ "emotion": ["A","H","N","S"] }, {"spkr": ["*"] } ]' style="width:90%" title='For each label, only one class can be selected as 1, whiles others are set to 0. Format: Array of objects object [{"label" : ["Class A", "Class B"]}]'>
+                        </div>
+
+                        <div class="w3-col m6">
+                            <label>Ordinal Labels (Array of Strings)</label>
+                            <input class="w3-input w3-dark-input" type="text" id="ordinal_labels" placeholder='["X", "Y", "Z"]' value='' style="width:90%" title='Independent continuous scale variables between 0 and 1. Format: Array of Strings ["var1", "var2"]'>
+                        </div>
+                    </div>
+
+
+
+                    <div class="w3-row w3-padding-16">
+
+                        <h5>Parse labels</h5>
+                        <p>Upload a label file. Only the labels prototyped above will be parsed. Use JSON format, where "i" gives the filename followed by labels. Example:
+                        </p>
+                        <pre class="w3-text-amber">[{"i": "file001.wav", "sex": "F", "spkr": 1}, {"i": "file002.wav", "sex": "M", "spkr": 2}]</pre>
+                        <div class="w3-col m3">
+                            <label for="up_labels_file" class="w3-margin-left w3-tiny"> Load Labels:</label>
+            <input type="file" id="up_labels_file" name="up_labels_file" accept="application/JSON" class="w3-margin-right w3-button w3-tiny">
+                        </div>
+
+                        
+
+                    </div>
+                    
+                </div>
+
+                
+            
+                <div class="w3-container  w3-theme-d1 w3-padding">
+                    
+                    <button class="w3-button w3-right w3-blue-grey w3-border w3-round-large w3-margin-left" onclick="document.getElementById('db_settings_model').style.display='none'">Close</button>
+                    
+                    <button class="w3-button w3-right w3-amber w3-border w3-round-large w3-margin-left" onclick="refresh_db_table()">yo</button>
+                    
+                </div>
+                
+            </div>
+          </div> 
+
+        <!-- ML training buttons div-->
+        <div class="center-content w3-row w3-center w3-padding-small"  id="ML_training_div">
+            <!-- 
+            <h3 class="w3-opacity">ML Training</h3>
+            <div class="w3-container w3-border w3-border-blue w3-cell  w3-cell-middle w3-padding-16">
+                <h5>YYY</h5>
+
+                <div class="w3-row w3-margin-top">
+                    <button onclick="SA.start_nn_training()" class="w3-button w3-tiny w3-border w3-border-indigo">Train</button>
+                </div>
+                <div class="w3-row w3-margin-top">
+                    <button onclick="SA.start_nn_prediction()" class="w3-button w3-tiny w3-border w3-border-indigo">Predict</button>
+                </div>
+                <div class="w3-row w3-margin-top">
+                    <button onclick="SA.download_nn_model()" class="w3-button w3-tiny w3-border w3-border-deep-purple">Download</button>
+                </div>
+                <div class="w3-row w3-margin-top">
+                    <button onclick="console.log('Load '+ 1);" class="w3-button w3-tiny w3-border w3-border-deep-purple">Load</button>
+                </div>
+                
+            </div>
+            -->
+            
+        </div>
+        <div id="ML_training_div_modals"></div>
+
+        
+        <!-- ML training status text-->
+        <pre id="nn_msg" class="w3-text-blue w3-wide"></pre>
+
+        <!-- DB table div -->
+        <div class="center-content w3-responsive" id="table_div">
+            <table class="center w3-table w3-bordered "> 
+                
+            </table>
+            
+        </div>
+        
+
+
+
+       
+
+
+          <!-- NN training edit Modal (example)-->
+        <!-- 
+        <div class="w3-row w3-center w3-padding-32">
+            <button onclick="document.getElementById('nn_edit_model').style.display='block'" class="w3-button w3-tiny w3-border w3-border-gray w3-margin-right">Edit</button>
+          <div id="nn_edit_model" class="w3-modal w3-animate-opacity">
+            <div class="w3-modal-content w3-card-4 w3-animate-zoom">
+                <header class="w3-container w3-theme-d1"> 
+                 <span onclick="document.getElementById('nn_edit_model').style.display='none'" 
+                 class="w3-button w3-red w3-xlarge w3-display-topright">&times;</span>
+                 <h2>Training</h2>
+                </header>
+                <div class="w3-container w3-theme-d2 w3-small">
+                    <div class="w3-row w3-padding-16">
+                        <textarea name="Text1" id="Textbox1" cols="10" rows="25" class="w3-input w3-dark-input" style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                    </div>
+                </div>
+                <div class="w3-container  w3-theme-d1 w3-padding">
+                    <button class="w3-button w3-right w3-blue-grey w3-border w3-round-large w3-margin-left" onclick="document.getElementById('nn_edit_model').style.display='none'">Close</button>
+                    <button class="w3-button w3-right w3-teal w3-border w3-round-large w3-margin-right"
+                    onclick="console.log(JSON.parse (document.getElementById('Textbox1').value))">Start</button>
+                </div>
+                
+            </div>
+          </div>
+
+        </div>
+        -->
+
+
+    
+    
+    </div>   <!-- DB Table container ends -->
+
+
+    <div class="footer">
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+            <span>
+                <!--- <b>Tabahi - Abdul Rehman</b> -->
+            </span>
+            
+            <span>© 2021</span>
+          </a>
+    </div>
+    
+    <script src="../js/depend/ml5.min.js"></script>
+    <script src="../js/cnn.js"></script>
+    <script src="../js/script.js"></script>
+
+    
+    <script>
+
+    
+    </script>
+    
+    </body>
+</html>
